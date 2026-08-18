@@ -1,4 +1,3 @@
-// Navbar.tsx
 import { Slot } from "@radix-ui/react-slot";
 import React, { forwardRef, useEffect, useRef } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -6,17 +5,16 @@ import { cn } from "@/libs/utils";
 import { entranceAnimations } from "@/libs/animations/entranceAnimation";
 import { hoverAnimations } from "@/libs/animations/hoverAnimation";
 import gsap from "gsap";
-import { Button } from "../Button";
 
 const navbarVariants = cva(
-  `w-full flex items-center justify-between px-6 py-4 rounded-md border border-gray-200 transition-all`,
+  "w-full flex items-center justify-between px-6 py-4 rounded-md border border-gray-200 transition-all",
   {
     variants: {
       variant: {
-        dark: "bg-slate-900 text-white",
+        dark: "bg-slate-900 text-white border-slate-800",
         light: "bg-white text-gray-800 shadow",
-        primary: "bg-indigo-600 text-white",
-        glass: "backdrop-blur-md bg-white/10 text-white border border-white/20",
+        primary: "bg-indigo-600 text-white border-indigo-500",
+        glass: "backdrop-blur-md bg-white/10 text-white border-white/20",
       },
       size: {
         default: "h-16",
@@ -32,12 +30,12 @@ const navbarVariants = cva(
   }
 );
 
-interface NavbarProps
+export interface NavbarProps
   extends React.HTMLAttributes<HTMLElement>,
     VariantProps<typeof navbarVariants> {
   asChild?: boolean;
-  animation?: keyof typeof entranceAnimations;
-  hoverAnimation?: keyof typeof hoverAnimations;
+  animation?: keyof typeof entranceAnimations | "none";
+  hoverAnimation?: keyof typeof hoverAnimations | "none";
 }
 
 const Navbar = forwardRef<HTMLElement, NavbarProps>(
@@ -49,53 +47,64 @@ const Navbar = forwardRef<HTMLElement, NavbarProps>(
       asChild = false,
       animation = "fadeIn",
       hoverAnimation = "none",
+      children,
+      onMouseEnter,
+      onMouseLeave,
       ...props
     },
     ref
   ) => {
     const Comp = asChild ? Slot : "nav";
-    const navbarRef = useRef<HTMLElement | null>(null);
+    const internalRef = useRef<HTMLElement | null>(null);
 
-    useEffect(() => {
-      if (!navbarRef.current || animation === "none") return;
-      entranceAnimations[animation]?.(navbarRef.current);
-    }, [animation]);
-
-    const handleMouseEnter = () => {
-      hoverAnimations[hoverAnimation]?.(navbarRef.current!);
+    // Merge outer ref and internal ref safely
+    const setRef = (node: HTMLElement | null) => {
+      internalRef.current = node;
+      if (typeof ref === "function") {
+        ref(node);
+      } else if (ref) {
+        (ref as React.MutableRefObject<HTMLElement | null>).current = node;
+      }
     };
 
-    const handleMouseLeave = () => {
-      gsap.to(navbarRef.current, {
-        scale: 1,
-        rotation: 0,
-        y: 0,
-        duration: 0.1,
-      });
+    useEffect(() => {
+      if (!internalRef.current || animation === "none") return;
+      const ctx = gsap.context(() => {
+        entranceAnimations[animation]?.(internalRef.current!);
+      }, internalRef);
+
+      return () => ctx.revert(); // Memory leak safety
+    }, [animation]);
+
+    const handleMouseEnter = (e: React.MouseEvent<HTMLElement>) => {
+      onMouseEnter?.(e);
+      if (internalRef.current && hoverAnimation !== "none") {
+        hoverAnimations[hoverAnimation]?.(internalRef.current);
+      }
+    };
+
+    const handleMouseLeave = (e: React.MouseEvent<HTMLElement>) => {
+      onMouseLeave?.(e);
+      if (internalRef.current && hoverAnimation !== "none") {
+        gsap.to(internalRef.current, {
+          scale: 1,
+          rotation: 0,
+          y: 0,
+          duration: 0.15,
+          ease: "power1.out",
+        });
+      }
     };
 
     return (
       <Comp
-        ref={(node) => {
-          navbarRef.current = node as HTMLElement;
-          if (typeof ref === "function") ref(node as HTMLElement);
-          else if (ref)
-            (ref as React.MutableRefObject<HTMLElement | null>).current = node;
-        }}
+        ref={setRef}
         className={cn(navbarVariants({ variant, size }), className)}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         {...props}
       >
-        <h1>Logo</h1>
-        <div className="flex gap-5">
-          <a href="">Home</a>
-          <a href="">About</a>
-          <a href="">Customer</a>
-        </div>
-        <div>
-          <Button hoverAnimation="none">Profile</Button>
-        </div>
+        {children}
       </Comp>
     );
   }

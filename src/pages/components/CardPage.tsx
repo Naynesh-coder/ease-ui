@@ -154,9 +154,9 @@ const CardPage = () => {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto p-4 space-y-12">
+    <div className="max-w-5xl mx-auto p-4 space-y-12">
       <div className="space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight">Card</h1>
+        <h1 className="text-4xl font-bold tracking-tight" style={{ color: "var(--text-color)" }} >Card</h1>
         <p className="text-xl text-gray-600">
           The Card component is a container for grouping content with a border
           and padding.
@@ -164,7 +164,7 @@ const CardPage = () => {
       </div>
 
       <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Usage</h2>
+        <h2 className="text-2xl font-semibold" style={{ color: "var(--text-color)" }} >Usage</h2>
         <div className="flex flex-col gap-20">
           <ComponentDemo code={darkCard}>
             <div className="w-100">
@@ -213,7 +213,7 @@ const CardPage = () => {
             </div>
           </ComponentDemo>
           <div className="flex flex-col gap-10">
-            <h1 className="text-2xl font-bold">Animated Card</h1>
+            <h1 className="text-2xl font-bold" style={{ color: "var(--text-color)" }} >Animated Card</h1>
             <ComponentDemo code={animatedCard}>
               <div className="w-100">
                 <Card
@@ -266,7 +266,7 @@ const CardPage = () => {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">API Reference</h2>
+        <h2 className="text-2xl font-semibold"  style={{ color: "var(--text-color)" }} >API Reference</h2>
         <PropsTable data={propsData} />
       </section>
     </div>

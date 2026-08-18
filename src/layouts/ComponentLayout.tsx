@@ -33,7 +33,7 @@ const ComponentLayout = ({}: Props) => {
           md:translate-x-0
         `}
       >
-        <h2 className="text-md font-bold mb-6">Components</h2>
+        <h2 className="text-md font-bold mb-6"  style={{ color: "var(--text-color)" }} >Components</h2>
         <ul className="flex flex-col gap-2">
           {components.map((item) => (
             <li

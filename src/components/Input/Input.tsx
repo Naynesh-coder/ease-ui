@@ -1,7 +1,7 @@
 import React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/libs/utils";
-
+import type { InputHTMLAttributes } from "react";
 const inputVariants = cva(
   "w-full rounded-md border focus:outline-none shadow-sm transition-all duration-150 bg-white placeholder:text-gray-400", // <-- Added 'border' here
   {
@@ -32,8 +32,9 @@ const inputVariants = cva(
 );
 
 export interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "disabled">,
     VariantProps<typeof inputVariants> {
+  disabled?: boolean;
   label?: string;
   hint?: string;
   error?: string;

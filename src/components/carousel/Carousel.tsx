@@ -153,7 +153,7 @@ const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
                 className={cn(
                   CarouselSizeVariants({ size }),
                   config.card,
-                  child.props.className
+                (child.props as React.HTMLAttributes<HTMLElement>).className
                 )}
               >
                 {child}

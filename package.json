@@ -18,11 +18,13 @@
     },
     "./style.css": "./dist/index.css"
   },
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build && tsc -p tsconfig.lib.json",
-    "preview": "vite preview"
-  },
+"scripts": {
+  "dev": "vite",
+  "build": "npm run build:lib && npm run build:web",
+  "build:lib": "cross-env BUILD_TARGET=lib vite build && tsc -p tsconfig.lib.json",
+  "build:web": "vite build",
+  "preview": "vite preview"
+},
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18"
@@ -44,6 +46,7 @@
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.3",
+    "cross-env": "^10.1.0",
     "typescript": "~5.8.3",
     "vite": "^7.1.7"
   }
